@@ -83,7 +83,7 @@ def get_crypto_insights(crypto):
                 "Please provide a detailed analysis of the current market situation and potential future trends based on these metrics.")
         
         response = client.chat.completions.create(
-            model="gpt-4o-mini",  # Changed to gpt-4
+            model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": "You are a cryptocurrency trading expert. Provide clear, concise analysis based on the given metrics."},
                 {"role": "user", "content": prompt}
