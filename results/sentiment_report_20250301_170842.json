@@ -1,0 +1,23 @@
+{
+  "timestamp": "2025-03-01 17:08:42",
+  "sentiment_score": 0.43988765891050535,
+  "time_period": "recent data",
+  "features": {
+    "avg_skirt_length": 0.47281087934970856,
+    "coffee_spending": 0.4101105845181662
+  },
+  "metadata": {
+    "search_query": "skirts fashion trend",
+    "historical_mode": false,
+    "start_date": null,
+    "end_date": null,
+    "num_images_requested": 10,
+    "num_images_processed": 10,
+    "num_skirts_detected": 4,
+    "processing_time_seconds": 9.505090236663818,
+    "model_metrics": {
+      "rmse": 0.15156880153384922,
+      "mae": 0.13368135812206147
+    }
+  }
+}
