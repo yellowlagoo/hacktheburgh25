@@ -3,9 +3,12 @@ import requests
 from openai import OpenAI
 import os
 from dotenv import load_dotenv
+import logging
 
 load_dotenv()
 
+logging.basicConfig(level=logging.DEBUG)
+logging.debug("OpenAI API Key: " + "Present" if os.getenv("OPENAI_API_KEY") else "Missing")
 
 client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 
@@ -104,4 +107,4 @@ def get_crypto_insights(crypto):
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5050)
+    app.run(debug=True, host='127.0.0.1', port=5050)
