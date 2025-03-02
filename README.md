@@ -1,6 +1,13 @@
 # Crypto Trading Assistant
 
-A Flask-based API that provides cryptocurrency trading insights using OpenAI's GPT-4 model and real-time market data from CoinGecko.
+A Flask-based API that provides cryptocurrency trading insights using OpenAI's GPT-4 model and real-time market data from CoinGecko and our own market sentiment predictors of coffee prices and skirt length
+
+Inially to aid our trading assistant in decision making, we wanted to predict a metric using promising but unconventional data - coffee price and skirt lengths. 
+Coffee is a globally traded commodity, and its prices can reflect various economic and environmental factors. Recent trends have shown significant price increases due to supply shortages caused by adverse weather conditions in major coffee-producing regions like Brazil and Vietnam. These shortages have led to record-high bean prices, affecting both consumers and businesses. 
+The Hemline Index is an economic theory suggesting that skirt lengths rise and fall with stock prices. Specifically, shorter skirts are believed to indicate bullish markets, while longer skirts suggest bearish trends. Although widely debated, this index provides an interesting perspective on consumer behavior and economic sentiment.
+Our general trends from our analysis was coffee prices have a positive correlaation with market sentiment due to increased consumer spending and shorter skirt lengths were associated with bullish markets (negative correlation to market sentiment)
+
+Using these models we predicted a value for market sentiment according to our trading assistant's query. This value is taken into consideration along with other key metrics and tools to generate a response.
 
 ## Features
 
