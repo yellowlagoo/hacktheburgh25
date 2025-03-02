@@ -1,0 +1,7 @@
+openai>=1.0.0
+flask
+requests
+python-dotenv
+plotly
+pandas
+numpy
