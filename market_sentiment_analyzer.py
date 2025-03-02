@@ -71,232 +71,7 @@ def retry_decorator(max_retries=3, delay=2):
         return wrapper
     return decorator
 
-class ImageScraper:
-    def __init__(self, delay_seconds: int = 2, cache_dir: Path = IMAGE_CACHE):
-        self.delay = delay_seconds
-        self.headers = {
-            'User-Agent': 'Research Bot (educational purposes only)'
-        }
-        self.cache_dir = cache_dir
-        self.cache_dir.mkdir(exist_ok=True)
 
-    def _get_cache_path(self, url: str) -> Path:
-        """Generate a cache path for a URL"""
-        url_hash = hashlib.md5(url.encode()).hexdigest()
-        return self.cache_dir / f"{url_hash}.jpg"
-
-    @retry_decorator(max_retries=3, delay=2)
-    def _download_image(self, url: str) -> Optional[bytes]:
-        """Download an image with retries"""
-        response = requests.get(url, headers=self.headers, timeout=10)
-        response.raise_for_status()
-        return response.content
-
-    def _save_to_cache(self, url: str, image_data: bytes) -> Path:
-        """Save image data to cache"""
-        cache_path = self._get_cache_path(url)
-        with open(cache_path, 'wb') as f:
-            f.write(image_data)
-        return cache_path
-
-    def _check_cache(self, url: str) -> Optional[Path]:
-        """Check if URL exists in cache"""
-        cache_path = self._get_cache_path(url)
-        if cache_path.exists():
-            return cache_path
-        return None
-
-    @retry_decorator(max_retries=5, delay=3)
-    def _scrape_page(self, url: str, page: int = 1) -> Tuple[List[str], Optional[str]]:
-        """
-        Scrape a single page of images
-        Returns: (list of image URLs, next page URL or None)
-        """
-        page_url = f"{url}?page={page}" if page > 1 else url
-        logger.info(f"Scraping page {page} from {page_url}")
-        
-        response = requests.get(page_url, headers=self.headers, timeout=15)
-        response.raise_for_status()
-        
-        soup = BeautifulSoup(response.text, 'html.parser')
-        
-        # Extract image URLs - this would need customization for the specific site
-        img_tags = soup.find_all('img', class_='post-image')
-        image_urls = [img['src'] for img in img_tags if 'src' in img.attrs]
-        
-        # Look for next page link - this would need customization
-        next_page = soup.find('a', class_='next-page')
-        next_page_url = next_page['href'] if next_page and 'href' in next_page.attrs else None
-        
-        return image_urls, next_page_url
-
-    def scrape_images(self, url: str, num_images: int) -> Dict[str, Path]:
-        """
-        Scrapes image URLs from social media platform with pagination
-        Returns: dictionary mapping URLs to local file paths
-        """
-        logger.info(f"Starting image scraping from {url}, targeting {num_images} images")
-        image_urls = []
-        page = 1
-        next_page_url = url
-        
-        # Scrape pages until we have enough images or no more pages
-        while next_page_url and len(image_urls) < num_images:
-            urls, next_page_url = self._scrape_page(next_page_url, page)
-            image_urls.extend(urls)
-            page += 1
-            time.sleep(self.delay)  # Ethical rate limiting
-        
-        # Limit to the number requested
-        image_urls = image_urls[:num_images]
-        
-        # Download images or use cached versions
-        image_paths = {}
-        for img_url in image_urls:
-            try:
-                # Check cache first
-                cached_path = self._check_cache(img_url)
-                if cached_path:
-                    logger.debug(f"Using cached image for {img_url}")
-                    image_paths[img_url] = cached_path
-                else:
-                    # Download and cache if not found
-                    logger.debug(f"Downloading image from {img_url}")
-                    image_data = self._download_image(img_url)
-                    if image_data:
-                        cached_path = self._save_to_cache(img_url, image_data)
-                        image_paths[img_url] = cached_path
-                    time.sleep(self.delay)  # Ethical rate limiting
-            except Exception as e:
-                logger.error(f"Error processing image {img_url}: {str(e)}")
-        
-        logger.info(f"Successfully processed {len(image_paths)} images out of {len(image_urls)} URLs")
-        return image_paths
-
-class SkirtLengthAnalyzer:
-    def __init__(self, model_path: Optional[str] = None):
-        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        logger.info(f"Using device: {self.device}")
-        
-        # Initialize base model
-        self.model = self._load_model(model_path)
-        
-        # Image preprocessing
-        self.transform = transforms.Compose([
-            transforms.Resize(256),
-            transforms.CenterCrop(224),
-            transforms.ToTensor(),
-            transforms.Normalize(
-                mean=[0.485, 0.456, 0.406],
-                std=[0.229, 0.224, 0.225]
-            )
-        ])
-        
-    def _load_model(self, model_path: Optional[str]) -> torch.nn.Module:
-        """Load model from path or use pretrained model"""
-        if model_path and os.path.exists(model_path):
-            logger.info(f"Loading custom model from {model_path}")
-            model = torch.load(model_path, map_location=self.device)
-        else:
-            logger.info("Loading pretrained ResNet model for feature extraction")
-            # Load pretrained model and modify for our use case
-            model = resnet50(pretrained=True)
-            
-            # Modify the final layer to predict skirt length (0-1)
-            num_features = model.fc.in_features
-            model.fc = torch.nn.Sequential(
-                torch.nn.Linear(num_features, 256),
-                torch.nn.ReLU(),
-                torch.nn.Dropout(0.2),
-                torch.nn.Linear(256, 64),
-                torch.nn.ReLU(),
-                torch.nn.Linear(64, 1),
-                torch.nn.Sigmoid()  # Sigmoid ensures output between 0-1
-            )
-            
-            # In a real scenario, this model would need to be fine-tuned
-            # Here we're just demonstrating the architecture
-            
-        model.to(self.device)
-        model.eval()
-        return model
-    
-    def _detect_person_and_skirt(self, image_path: Path) -> Tuple[bool, Optional[np.ndarray]]:
-        """
-        Use OpenCV to detect a person and potential skirt in the image
-        Returns: (success, ROI containing skirt or None)
-        """
-        try:
-            # Load image
-            image = cv2.imread(str(image_path))
-            if image is None:
-                logger.warning(f"Could not load image: {image_path}")
-                return False, None
-                
-            # In a real implementation, you would:
-            # 1. Use a person detector (HOG, YOLO, or a dedicated model)
-            # 2. Run pose estimation to find lower body keypoints
-            # 3. Extract the region containing the skirt
-            
-            # Placeholder implementation (would need to be replaced)
-            # This simulates finding a skirt ROI in 70% of images
-            if np.random.random() > 0.3:
-                # Create a simulated ROI (lower part of the image)
-                height, width = image.shape[:2]
-                skirt_roi = image[height//2:height, width//4:3*width//4]
-                return True, skirt_roi
-            else:
-                return False, None
-                
-        except Exception as e:
-            logger.error(f"Error in skirt detection for {image_path}: {str(e)}")
-            return False, None
-    
-    def _preprocess_image(self, image_path: Path) -> Optional[torch.Tensor]:
-        """Load and preprocess image for model input"""
-        try:
-            image = Image.open(image_path).convert('RGB')
-            image_tensor = self.transform(image).unsqueeze(0).to(self.device)
-            return image_tensor
-        except Exception as e:
-            logger.error(f"Error preprocessing image {image_path}: {str(e)}")
-            return None
-
-    def analyze_images(self, image_paths: Dict[str, Path]) -> Dict[str, float]:
-        """
-        Analyzes skirt lengths in images
-        Returns: Dictionary mapping URLs to skirt length scores (0-1)
-        """
-        results = {}
-        
-        with torch.no_grad():  # Disable gradient calculation for inference
-            for url, path in image_paths.items():
-                try:
-                    # Detect person and skirt
-                    has_skirt, skirt_roi = self._detect_person_and_skirt(path)
-                    
-                    if not has_skirt:
-                        logger.debug(f"No skirt detected in {url}")
-                        continue
-                    
-                    # Preprocess image for model
-                    image_tensor = self._preprocess_image(path)
-                    if image_tensor is None:
-                        continue
-                    
-                    # Run inference
-                    prediction = self.model(image_tensor)
-                    skirt_length = prediction.item()  # Extract scalar value
-                    
-                    # Store result
-                    results[url] = skirt_length
-                    logger.debug(f"Image {url}: skirt length score = {skirt_length:.4f}")
-                    
-                except Exception as e:
-                    logger.error(f"Error analyzing image {url}: {str(e)}")
-        
-        logger.info(f"Successfully analyzed {len(results)} images")
-        return results
 
 class ConsumerDataAnalyzer:
     def __init__(self, coffee_data_path: str, start_date: Optional[str] = None, end_date: Optional[str] = None):
@@ -509,43 +284,24 @@ def analyze_market_sentiment(
             
             # Process coffee data for the time period
             coffee_score = consumer_analyzer.process_consumer_data()
-            
-            # In historical mode, use a fixed neutral value for skirt length
-            # You could enhance this later with actual historical fashion data if available
-            avg_skirt_length = 0.5
-            logger.info(f"Using neutral skirt length value of 0.5 for historical analysis")
+           
             
             # Prepare features
-            features = np.array([avg_skirt_length, coffee_score])
+            features = np.array(coffee_score])
         else:
-            # Normal mode with current social media images
-            logger.info("Step 1: Scraping images for '{search_query}'")
-            image_paths = scrape_social_media_images(search_query, num_images, platforms)
-            
-            logger.info("Step 2: Analyzing skirt lengths")
-            skirt_lengths = skirt_analyzer.analyze_images(image_paths)
-            
-            logger.info("Step 3: Processing consumer data")
+            logger.info("Step : Processing consumer data")
             coffee_score = consumer_analyzer.process_consumer_data()
 
-            # Prepare features
-            if skirt_lengths:
-                avg_skirt_length = np.mean(list(skirt_lengths.values()))
-            else:
-                logger.warning("No valid skirt lengths detected, using fallback value")
-                avg_skirt_length = 0.5  # Fallback to neutral value
-                
-            features = np.array([avg_skirt_length, coffee_score])
+            features = np.array([coffee_score])
         
         # Mock training data if needed (in a real scenario, this would be historical data)
         if not predictor.is_trained and model_path is None:
             logger.info("Generating synthetic training data for model training")
             # Generate synthetic data for demonstration
             n_samples = 100
-            X_synth = np.random.rand(n_samples, 2)  # 2 features now: skirts and coffee
-            # Synthetic formula: longer skirts (lower score) and higher coffee spending
-            # correlate with bullish sentiment
-            y_synth = (1 - X_synth[:, 0]) * 0.5 + X_synth[:, 1] * 0.5
+            X_synth = np.random.rand(n_samples, 1)  # 1 feature now: just coffee
+            # Synthetic formula: higher coffee spending correlates with bullish sentiment
+            y_synth = X_synth[:, 0]  # Coffee spending directly proportional to sentiment
             y_synth = np.clip(y_synth + np.random.normal(0, 0.1, n_samples), 0, 1)
             
             logger.info("Step 4: Training model with synthetic data")
@@ -572,7 +328,6 @@ def analyze_market_sentiment(
             "sentiment_score": float(sentiment_score),
             "time_period": time_period,
             "features": {
-                "avg_skirt_length": float(avg_skirt_length),
                 "coffee_spending": float(coffee_score)
             },
             "metadata": {
@@ -581,8 +336,7 @@ def analyze_market_sentiment(
                 "start_date": start_date,
                 "end_date": end_date,
                 "num_images_requested": 0 if historical_mode else num_images,
-                "num_images_processed": 0 if historical_mode else len(image_paths),
-                "num_skirts_detected": 0 if historical_mode else len(skirt_lengths),
+                "num_images_processed": 0 if historical_mode else len(image_paths)"
                 "processing_time_seconds": time.time() - start_time,
                 "model_metrics": metrics
             }
