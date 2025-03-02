@@ -85,5 +85,3 @@ def run_prophet_forecast(prophet_df):
 clean_data = clean_csv('coffee-prices-historical-chart-data.csv')
 prophet_df = prepare_prophet_dataframe(clean_data)
 forecast = run_prophet_forecast(prophet_df)
-    
-
