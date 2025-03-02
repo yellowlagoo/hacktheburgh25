@@ -66,6 +66,26 @@ The server will start at `http://localhost:5050`
 - Solana (SOL)
 - And many more (using CoinGecko IDs)
 
+## Credits 
+OpenAI API
+CoinGecko
+Cursor 
+pandas
+numpy
+matplotlib.pyplot
+sklearn
+csv
+pathlib
+random
+urllib.parse
+hashlib
+numpy
+PIL
+datasets: 
+Coffee Prices - 45 Year Historical Chart from Macrotrends 
+University of Michigan: Consumer Sentiment (UMCSENT)
+
+
 ## Contributing
 
 Feel free to open issues or submit pull requests for any improvements.
