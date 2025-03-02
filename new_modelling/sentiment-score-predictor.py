@@ -59,6 +59,15 @@ def clean_csv(file_path):
     return clean_data
 
 # Load the datasets
+coffee_df = pd.read_csv("new_modelling/coffee-prices-historical-chart-data.csv", skiprows=15)
+sentiment_df = pd.read_csv("new_modelling/UMCSENT.csv")
+
+print("Coffee data columns:", coffee_df.columns.tolist())
+print("Sentiment data columns:", sentiment_df.columns.tolist())
+
+# Rename columns to make them more descriptive
+coffee_df.rename(columns={'date': 'Date', 'value': 'Coffee Price'}, inplace=True)
+sentiment_df.rename(columns={'observation_date': 'Date', 'UMCSENT': 'Sentiment Score'}, inplace=True)
 clean_coffee = clean_csv('coffee-prices-historical-chart-data.csv')
 coffee_df = pd.read_csv(StringIO(clean_coffee))
 sentiment_df = pd.read_csv("UMCSENT.csv")
@@ -73,6 +82,10 @@ monthly_coffee = coffee_df.resample('M', on='date').mean().reset_index()
 monthly_coffee = monthly_coffee.rename(columns={'date': 'observation_date'})
 
 # Merge with sentiment data on the date column
+merged_df = pd.merge(monthly_coffee, sentiment_df, on="Date", how="inner")
+print(f"Shape of merged data: {merged_df.shape}")
+print("First few rows of merged data:")
+print(merged_df.head())
 merged_df = pd.merge(monthly_coffee, sentiment_df, on="observation_date", how="inner")
 
 # Define features (X) and target (y)
@@ -91,19 +104,22 @@ formula = f"Sentiment Score = {intercept:.4f} + {coefficient:.4f} * Coffee Price
 print("\nLinear Regression Formula:")
 print(formula)
 
-# Make predictions
-#y_pred = model.predict()
+# Make predictions on the training data
+#y_pred = model.predict(x)
 
 # Evaluate the model
-#r2 = r2_score(y_test, y_pred)
-#mae = mean_absolute_error(y_test, y_pred)
+#r2 = r2_score(y, y_pred)
+#mae = mean_absolute_error(y, y_pred)
 
-#print(f"Model R² Score: {r2:.4f}")
+#print(f"\nModel R² Score: {r2:.4f}")
 #print(f"Mean Absolute Error: {mae:.4f}")
 
 # Plot Actual vs Predicted
-#plt.scatter(y_test, y_pred)
+#plt.figure(figsize=(10, 6))
+#plt.scatter(y, y_pred)
+#plt.plot([y.min(), y.max()], [y.min(), y.max()], 'k--')
 #plt.xlabel("Actual Sentiment Score")
 #plt.ylabel("Predicted Sentiment Score")
 #plt.title("Coffee Price → Market Sentiment Prediction")
-#plt.show()
+#plt.savefig("sentiment_prediction.png")
+#print("Plot saved as sentiment_prediction.png")
