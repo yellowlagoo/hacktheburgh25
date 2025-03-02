@@ -79,6 +79,7 @@ urllib.parse
 hashlib
 numpy
 PIL
+Chat-GPT
 bolt.new
 datasets: 
 Coffee Prices - 45 Year Historical Chart from Macrotrends 
