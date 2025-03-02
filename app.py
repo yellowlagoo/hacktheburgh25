@@ -6,21 +6,36 @@ from dotenv import load_dotenv
 import time
 from functools import lru_cache
 from datetime import datetime, timedelta
+import json
+from market_sentiment_analyzer import analyze_market_sentiment, ConsumerDataAnalyzer
+from flask_cors import CORS
+import re
 
 load_dotenv()
 
-client = OpenAI(
-    api_key=os.getenv('OPENAI_API_KEY')
-)
+# Initialize OpenAI client with just the API key
+client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": ["http://localhost:5173", "http://localhost:5174"]}})
+
+# Error handler for all exceptions
+@app.errorhandler(Exception)
+def handle_error(error):
+    print(f"Error: {str(error)}")
+    response = {
+        "error": str(error),
+        "status": "error"
+    }
+    return jsonify(response), 500
 
 # Cache for storing API responses
 price_cache = {}
 CACHE_DURATION = 30  # seconds
 
-# Extended crypto mapping
+# Expanded crypto mapping with more coins and common terms
 crypto_mapping = {
+    # Major coins and their symbols
     'btc': 'bitcoin',
     'eth': 'ethereum',
     'bnb': 'binancecoin',
@@ -29,18 +44,59 @@ crypto_mapping = {
     'ada': 'cardano',
     'doge': 'dogecoin',
     'dot': 'polkadot',
-    'matic': 'matic-network',
+    'matic': 'polygon',
     'link': 'chainlink',
     'uni': 'uniswap',
     'avax': 'avalanche-2',
     'atom': 'cosmos',
     'ltc': 'litecoin',
-    'near': 'near'
+    'near': 'near',
+    
+    # Common terms and variations
+    'bitcoin': 'bitcoin',
+    'ethereum': 'ethereum',
+    'binance': 'binancecoin',
+    'solana': 'solana',
+    'ripple': 'ripple',
+    'cardano': 'cardano',
+    'dogecoin': 'dogecoin',
+    'polkadot': 'polkadot',
+    'polygon': 'polygon',
+    'chainlink': 'chainlink',
+    'uniswap': 'uniswap',
+    'avalanche': 'avalanche-2',
+    'cosmos': 'cosmos',
+    'litecoin': 'litecoin',
+    
+    # Parenthetical variations
+    'bitcoin (btc)': 'bitcoin',
+    'ethereum (eth)': 'ethereum',
+    'ripple (xrp)': 'ripple',
+    'cardano (ada)': 'cardano',
+    'binance coin (bnb)': 'binancecoin',
+    'solana (sol)': 'solana',
+    'dogecoin (doge)': 'dogecoin',
+    'polkadot (dot)': 'polkadot',
+    'polygon (matic)': 'polygon',
+    'chainlink (link)': 'chainlink',
+    'uniswap (uni)': 'uniswap',
+    'avalanche (avax)': 'avalanche-2',
+    'cosmos (atom)': 'cosmos',
+    'litecoin (ltc)': 'litecoin',
+    'near (near)': 'near',
+    
+    # Common phrases and variations
+    'btc price': 'bitcoin',
+    'eth price': 'ethereum',
+    'bitcoin price': 'bitcoin',
+    'ethereum price': 'ethereum',
+    'price of bitcoin': 'bitcoin',
+    'price of ethereum': 'ethereum'
 }
 
 # Default coins to analyze if none specified
-DEFAULT_COINS = ['bitcoin', 'ethereum', 'binancecoin']
-MAX_COINS = 5  # Maximum number of coins to analyze at once
+DEFAULT_COINS = ['bitcoin', 'ethereum', 'binancecoin', 'solana', 'ripple', 'cardano', 'dogecoin', 'polkadot', 'polygon', 'chainlink', 'uniswap', 'avalanche-2', 'cosmos', 'litecoin', 'near']
+MAX_COINS = 15  # Maximum number of coins to analyze at once
 
 def make_request(url):
     current_time = datetime.now()
@@ -85,23 +141,14 @@ def home():
 @app.route('/price/<crypto>')
 def get_crypto_price(crypto):
     try:
-        # Convert common symbols to CoinGecko IDs
-        crypto_mapping = {
-            'btc': 'bitcoin',
-            'eth': 'ethereum',
-            'doge': 'dogecoin',
-            'xrp': 'ripple',
-            'sol': 'solana'
-        }
-        
         # Convert to lowercase and get mapped ID if exists
         crypto_id = crypto.lower()
         crypto_id = crypto_mapping.get(crypto_id, crypto_id)
         
         print(f"\nFetching price for: {crypto_id}")
         
-        # Get detailed coin data
-        url = f'https://api.coingecko.com/api/v3/coins/{crypto_id}?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false'
+        # Simplified URL with only essential fields
+        url = f'https://api.coingecko.com/api/v3/simple/price?ids={crypto_id}&vs_currencies=usd&include_24hr_vol=true&include_24hr_change=true&include_market_cap=true'
         response = make_request(url)
         
         if response.status_code == 429:
@@ -115,17 +162,19 @@ def get_crypto_price(crypto):
             return jsonify({'error': error_msg}), 404
             
         data = response.json()
-        market_data = data.get('market_data', {})
         
+        if crypto_id not in data:
+            error_msg = f'No data available for {crypto_id}'
+            print(f"Error: {error_msg}")
+            return jsonify({'error': error_msg}), 404
+        
+        coin_data = data[crypto_id]
         result = {
             crypto_id: {
-                'usd': market_data.get('current_price', {}).get('usd', 0),
-                'usd_market_cap': market_data.get('market_cap', {}).get('usd', 0),
-                'usd_24h_vol': market_data.get('total_volume', {}).get('usd', 0),
-                'usd_24h_change': market_data.get('price_change_percentage_24h', 0),
-                'usd_1h_change': market_data.get('price_change_percentage_1h', {}).get('usd', 0),
-                'usd_24h_high': market_data.get('high_24h', {}).get('usd', 0),
-                'usd_24h_low': market_data.get('low_24h', {}).get('usd', 0)
+                'usd': coin_data.get('usd', 0),
+                'usd_market_cap': coin_data.get('usd_market_cap', 0),
+                'usd_24h_vol': coin_data.get('usd_24h_vol', 0),
+                'usd_24h_change': coin_data.get('usd_24h_change', 0)
             }
         }
         
@@ -400,291 +449,188 @@ def generate_enhanced_trading_recommendations(metrics):
     return "\n".join(f"• {rec}" for rec in recommendations)
 
 def extract_coin_symbols(user_input):
-    """Extract cryptocurrency symbols from user input."""
+    """Extract cryptocurrency symbols from user input with improved handling."""
     query_lower = user_input.lower()
-    requested_coins = []
+    requested_coins = set()  # Using set to avoid duplicates
     
-    # Look for specific coin mentions
-    for symbol, coin_id in crypto_mapping.items():
-        if symbol in query_lower or coin_id in query_lower:
-            requested_coins.append(coin_id)
+    print(f"Processing query: {query_lower}")
     
-    # If no specific coins mentioned, use default set
+    # First, try to find full names with parenthetical symbols
+    # This will match patterns like "Bitcoin (BTC)" or "Ethereum (ETH)"
+    full_matches = re.findall(r'([a-zA-Z\s]+)\s*\(([^)]+)\)', query_lower)
+    print(f"Found full name matches: {full_matches}")
+    
+    for full_name, symbol in full_matches:
+        clean_symbol = symbol.strip().lower()
+        clean_name = full_name.strip().lower()
+        # Try the symbol first, then the full name
+        if clean_symbol in crypto_mapping:
+            requested_coins.add(crypto_mapping[clean_symbol])
+            print(f"Added coin from symbol in parentheses: {crypto_mapping[clean_symbol]}")
+        elif clean_name in crypto_mapping:
+            requested_coins.add(crypto_mapping[clean_name])
+            print(f"Added coin from full name: {crypto_mapping[clean_name]}")
+    
+    # If no full matches found, look for standalone symbols in parentheses
     if not requested_coins:
+        symbol_matches = re.findall(r'\(([^)]+)\)', query_lower)
+        print(f"Found symbol matches: {symbol_matches}")
+        for symbol in symbol_matches:
+            clean_symbol = symbol.strip().lower()
+            if clean_symbol in crypto_mapping:
+                requested_coins.add(crypto_mapping[clean_symbol])
+                print(f"Added coin from standalone symbol: {crypto_mapping[clean_symbol]}")
+    
+    # Look for exact matches of coin names or symbols
+    if not requested_coins:
+        words = query_lower.split()
+        for word in words:
+            clean_word = word.strip('.,!?()[]{}').lower()
+            if clean_word in crypto_mapping:
+                requested_coins.add(crypto_mapping[clean_word])
+                print(f"Added coin from word match: {crypto_mapping[clean_word]}")
+    
+    # If we found specific coins, return them
+    if requested_coins:
+        print(f"Final coins selected: {list(requested_coins)}")
+        return list(requested_coins)[:MAX_COINS]
+    
+    # If the query mentions crypto but no specific coins found, return an empty list
+    crypto_terms = ['cryptocurrency', 'crypto', 'coin', 'token', 'blockchain']
+    if any(term in query_lower for term in crypto_terms):
+        print("Query contains crypto terms but no specific coins identified")
+        return []
+    
+    # Only use default coins if explicitly requested
+    if 'default' in query_lower or 'all coins' in query_lower:
+        print("Using default coins as explicitly requested")
         return DEFAULT_COINS
     
-    # Limit to MAX_COINS
-    return requested_coins[:MAX_COINS]
+    # If we get here, no coins were found and no crypto terms were present
+    print("No coins found in query")
+    return []
 
 @app.route('/command', methods=['POST'])
 def process_command():
     try:
-        print("\n=== Received command request ===")
-        print("Request headers:", request.headers)
         data = request.get_json()
-        print("Request data:", data)
+        command = data.get('command', '').lower()
+        is_intro = data.get('is_intro', False)
         
-        if not data:
-            print("Error: No JSON data received")
-            return jsonify({'error': 'No data provided'}), 400
-            
-        user_input = data.get('command', '')
-        if not user_input:
-            print("Error: Empty command received")
-            return jsonify({'error': 'Please provide a command'}), 400
-            
-        # Extract requested coins from user input
-        crypto_ids = extract_coin_symbols(user_input)
-        print(f"Analyzing cryptocurrencies: {crypto_ids}")
+        # Extract coins from command
+        coins = extract_coin_symbols(command)
         
+        # Collect metrics for all requested coins
         all_metrics = {}
-        rate_limited = False
+        analyzed_coins = []
         
-        for crypto_id in crypto_ids:
-            print(f"\nProcessing analysis for: {crypto_id}")
-            
-            # Get real-time crypto data
-            url = f'https://api.coingecko.com/api/v3/coins/{crypto_id}?localization=false&tickers=false&market_data=true&community_data=true&developer_data=true'
-            print(f"Fetching data from: {url}")
-            response = make_request(url)
-            
-            if response.status_code == 429:
-                print("Error: Rate limit exceeded")
-                rate_limited = True
-                break
+        for coin in coins:
+            try:
+                # Get current price and market data
+                url = f"https://api.coingecko.com/api/v3/simple/price?ids={coin}&vs_currencies=usd&include_24hr_vol=true&include_24hr_change=true&include_market_cap=true&include_last_updated_at=true"
+                response = make_request(url)
                 
-            if response.status_code != 200:
-                print(f"Error: Bad response from CoinGecko API: {response.status_code}")
-                continue
-                
-            data = response.json()
-            market_data = data.get('market_data', {})
-            if not market_data:
-                print(f"Error: No market data for {crypto_id}")
-                continue
-            
-            # Extract enhanced metrics
-            metrics = {
-                'symbol': data.get('symbol', '').upper(),
-                'current_price': market_data.get('current_price', {}).get('usd', 0),
-                'market_cap': market_data.get('market_cap', {}).get('usd', 0),
-                'volume': market_data.get('total_volume', {}).get('usd', 0),
-                'high_24h': market_data.get('high_24h', {}).get('usd', 0),
-                'low_24h': market_data.get('low_24h', {}).get('usd', 0),
-                'price_change_24h': market_data.get('price_change_percentage_24h', 0),
-                'price_change_7d': market_data.get('price_change_percentage_7d', 0),
-                'price_change_30d': market_data.get('price_change_percentage_30d', 0),
-                'price_change_1h': market_data.get('price_change_percentage_1h_in_currency', {}).get('usd', 0),
-                'price_change_14d': market_data.get('price_change_percentage_14d', 0),
-                'price_change_1y': market_data.get('price_change_percentage_1y', 0),
-                'ath': market_data.get('ath', {}).get('usd', 0),
-                'ath_change_percentage': market_data.get('ath_change_percentage', {}).get('usd', 0),
-                'ath_date': market_data.get('ath_date', {}).get('usd', ''),
-                'atl': market_data.get('atl', {}).get('usd', 0),
-                'atl_change_percentage': market_data.get('atl_change_percentage', {}).get('usd', 0),
-                'atl_date': market_data.get('atl_date', {}).get('usd', ''),
-                'market_cap_rank': data.get('market_cap_rank', 'N/A'),
-                'market_cap_change_24h': market_data.get('market_cap_change_percentage_24h', 0),
-                'total_supply': market_data.get('total_supply', 0),
-                'max_supply': market_data.get('max_supply', 0),
-                'circulating_supply': market_data.get('circulating_supply', 0),
-                'fully_diluted_valuation': market_data.get('fully_diluted_valuation', {}).get('usd', 0),
-                'total_value_locked': market_data.get('total_value_locked', None),
-                'developer_data': data.get('developer_data', {}),
-                'community_data': data.get('community_data', {}),
-                'public_interest_stats': data.get('public_interest_stats', {})
-            }
-            
-            all_metrics[crypto_id] = metrics
-            print(f"Metrics extracted successfully for {crypto_id}")
+                if response.status_code == 200:
+                    data = response.json()
+                    if coin in data:
+                        coin_data = data[coin]
+                        metrics = {
+                            'current_price': coin_data['usd'],
+                            '24h_volume': coin_data.get('usd_24h_vol', 0),
+                            '24h_change': coin_data.get('usd_24h_change', 0),
+                            'market_cap': coin_data.get('usd_market_cap', 0),
+                            'last_updated': coin_data.get('last_updated_at', 0)
+                        }
+                        all_metrics[coin] = metrics
+                        analyzed_coins.append(coin)
+                        print(f"Successfully got data for {coin}")
+                    else:
+                        print(f"No data available for {coin}")
+                else:
+                    print(f"Failed to get data for {coin}: {response.status_code}")
+            except Exception as e:
+                print(f"Error processing {coin}: {str(e)}")
+                continue  # Continue with other coins if one fails
         
-        if rate_limited:
+        if not analyzed_coins:
             return jsonify({
-                'error': 'Rate limit exceeded. Please try again in a minute or reduce the number of cryptocurrencies.',
-                'partial_metrics': all_metrics if all_metrics else None
-            }), 429
+                'error': 'No valid coins to analyze. Try mentioning specific cryptocurrencies like Bitcoin (BTC) or Ethereum (ETH).'
+            }), 400
         
-        if not all_metrics:
-            return jsonify({'error': 'No data could be retrieved for any cryptocurrency'}), 500
-            
-        # Build analysis prompt based on available metrics
-        analyzed_coins = list(all_metrics.keys())
-        
-        # Determine the type of analysis needed based on user input
-        query_lower = user_input.lower()
-        
-        # Advanced analysis keywords
-        advanced_keywords = [
-            'technical analysis', 'trading strategy', 'market conditions', 'volume analysis',
-            'indicators', 'trends', 'correlations', 'risk assessment', 'predictive',
-            'liquidity', 'volatility', 'statistical', 'trading volume', 'market sentiment',
-            'rsi', 'macd', 'bollinger', 'entry points', 'exit points', 'stop-loss'
-        ]
-        
-        # Basic/intro keywords
-        intro_keywords = [
-            'intro', 'introduction', 'explain', 'what is', 'tell me about', 'basics',
-            'beginner', 'new to', 'help understand', 'learn about'
-        ]
-        
-        # Count keyword matches
-        advanced_count = sum(1 for keyword in advanced_keywords if keyword in query_lower)
-        intro_count = sum(1 for keyword in intro_keywords if keyword in query_lower)
-        
-        # Determine query complexity
-        is_advanced = advanced_count >= 2  # If query contains multiple advanced terms
-        is_intro = intro_count > 0 and not is_advanced  # Intro only if not advanced
-        
-        if is_intro:
-            # Get the first coin's metrics for intro analysis
-            first_coin = analyzed_coins[0]
-            first_coin_metrics = all_metrics[first_coin]
-            
-            prompt = f"""As a cryptocurrency expert, provide a beginner-friendly introduction to {first_coin}. The current data shows:
-
-{first_coin.upper()} Overview:
-• Current Price: ${first_coin_metrics['current_price']:,.2f}
-• Market Cap: ${first_coin_metrics['market_cap']:,.2f}
-• 24h Change: {first_coin_metrics['price_change_24h']:+.2f}%
-
-Focus on:
-1. What {first_coin.title()} is and its basic purpose
-2. Key features that make it valuable
-3. Simple explanation of how it works
-4. Basic terms a beginner should know
-5. Current market status in simple terms
-
-Keep the explanation friendly, avoid technical jargon, and use simple analogies where helpful.
-Use the current price data to give context but focus on the fundamentals.
-
-User Query: {user_input}"""
-
-            system_content = """You are a cryptocurrency expert focusing on beginner education:
-            - Use simple, clear language
-            - Avoid technical jargon unless explaining it
-            - Use analogies and examples
-            - Focus on fundamentals
-            - Make concepts accessible to newcomers"""
-
-        elif is_advanced:
-            # Build market metrics section for all analyzed coins
-            market_metrics = []
-            for coin in analyzed_coins:
-                metrics = all_metrics[coin]
-                market_metrics.append(f"""{coin.upper()}:
-• Price: ${metrics['current_price']:,.2f}
-• 24h Range: ${metrics['high_24h']:,.2f} (H) / ${metrics['low_24h']:,.2f} (L)
-• Volume: ${metrics['volume']:,.2f}
-• Market Cap: ${metrics['market_cap']:,.2f}
-• Changes: 1h: {metrics['price_change_1h']:+.2f}% | 24h: {metrics['price_change_24h']:+.2f}% | 7d: {metrics['price_change_7d']:+.2f}%""")
-            
-            # Calculate market structure metrics if we have multiple coins
-            market_structure = []
-            if len(analyzed_coins) > 1:
-                total_mcap = sum(all_metrics[coin]['market_cap'] for coin in analyzed_coins)
-                for coin in analyzed_coins:
-                    dominance = (all_metrics[coin]['market_cap'] / total_mcap * 100)
-                    market_structure.append(f"• {coin.upper()} Dominance: {dominance:.2f}%")
-            
-            # Volume analysis for all coins
-            volume_analysis = []
-            for coin in analyzed_coins:
-                metrics = all_metrics[coin]
-                vol_mcap = (metrics['volume'] / metrics['market_cap'] * 100)
-                volume_analysis.append(f"• {coin.upper()} Vol/MCap: {vol_mcap:.2f}%")
-            
-            prompt = f"""As a quantitative cryptocurrency analyst, provide advanced market analysis based on the following real-time data:
-
-### MARKET METRICS
-
-{chr(10).join(market_metrics)}
-
-{f'''### MARKET STRUCTURE
-{chr(10).join(market_structure)}''' if market_structure else ''}
-
-### VOLUME ANALYSIS
-{chr(10).join(volume_analysis)}
-
-User Query: {user_input}
-
-Provide institutional-grade analysis focusing on:
-1. Technical Analysis (RSI, MACD, Bollinger Bands)
-2. Volume Profile and Market Microstructure
-3. Inter-market Correlations
-4. Risk Assessment and Position Sizing
-5. Entry/Exit Points with Stop-Loss Levels
-6. Market Sentiment Analysis
-7. Short-term Price Predictions with Confidence Intervals"""
-
-            system_content = """You are an elite quantitative cryptocurrency analyst specializing in:
-            - Advanced Technical Analysis
-            - Market Microstructure
-            - Statistical Arbitrage
-            - Risk Management
-            - Derivatives Trading
-            - Algorithmic Strategies
-            
-            Provide institutional-grade analysis:
-            - Use advanced trading terminology
-            - Include specific technical indicators
-            - Give precise entry/exit points
-            - Calculate risk metrics
-            - Provide confidence intervals
-            - Reference statistical evidence
-            
-            Format output with clear sections for:
-            - Technical Analysis
-            - Volume Profile
-            - Risk Assessment
-            - Trade Setup
-            - Price Targets"""
-
-        else:
-            # Standard analysis for general queries
-            market_overview = []
-            for coin in analyzed_coins:
-                metrics = all_metrics[coin]
-                market_overview.append(f"{coin.upper()}: ${metrics['current_price']:,.2f} ({metrics['price_change_24h']:+.2f}% 24h)")
-            
-            prompt = f"""As a cryptocurrency analyst, provide a balanced analysis of the current market:
-
-### MARKET OVERVIEW
-{chr(10).join(market_overview)}
-
-Focus on:
-1. Current market conditions
-2. Notable price movements
-3. Key support/resistance levels
-4. Market sentiment
-5. Trading opportunities
-
-User Query: {user_input}"""
-
-            system_content = """You are a cryptocurrency analyst providing balanced market insights:
-            - Combine technical and fundamental analysis
-            - Use clear, professional language
-            - Include both data and context
-            - Provide actionable insights
-            - Balance detail with accessibility"""
-
-        print("Sending request to OpenAI")
+        # Get market sentiment analysis
         try:
-            response = client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[
-                    {"role": "system", "content": system_content},
-                    {"role": "user", "content": prompt}
-                ]
-            )
-            
-            analysis = response.choices[0].message.content
-            print("Received response from OpenAI")
-            
-        except Exception as openai_error:
-            print(f"OpenAI API Error: {str(openai_error)}")
-            return jsonify({'error': f'OpenAI API Error: {str(openai_error)}'}), 500
+            consumer_analyzer = ConsumerDataAnalyzer('APU0000717311.csv')
+            coffee_sentiment = consumer_analyzer.process_consumer_data()
+            sentiment_description = "positive" if coffee_sentiment > 0.6 else "neutral" if coffee_sentiment > 0.4 else "negative"
+            sentiment_context = f"\nConsumer spending sentiment is {sentiment_description} (score: {coffee_sentiment:.2f}), based on coffee price trends."
+        except Exception as e:
+            print(f"Error getting sentiment analysis: {e}")
+            sentiment_description = "neutral"
+            coffee_sentiment = 0.5
+            sentiment_context = "Unable to analyze market sentiment due to an error."
+
+        # Generate analysis using OpenAI
+        system_prompt = """You are an expert cryptocurrency analyst and educator. Adapt your analysis style and complexity to match the user's apparent knowledge level and interests, which you should infer from their query style, terminology usage, and specific requests.
+
+Key Principles:
+1. Match Technical Depth: Scale technical complexity based on the user's apparent expertise level
+2. Maintain Accessibility: Always explain complex concepts when introducing them
+3. Progressive Disclosure: Layer information from fundamental to advanced as needed
+4. Context Awareness: Reference relevant market metrics and indicators appropriately
+5. Educational Value: Weave explanations and insights naturally into analysis
+
+Analysis Framework:
+- Adapt technical depth based on query complexity
+- Include relevant metrics and indicators for context
+- Explain market dynamics at appropriate depth
+- Connect analysis to practical implications
+- Provide actionable insights scaled to user sophistication"""
+
+        prompt = f"Analyze the following cryptocurrency metrics and market sentiment:\n\n"
         
-        # Format the final response
+        # Add time context
+        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S UTC")
+        prompt += f"Analysis Time: {current_time}\n\n"
+        
+        # Add coin metrics
+        for coin in analyzed_coins:
+            metrics = all_metrics[coin]
+            prompt += f"{coin.title()}:\n"
+            prompt += f"- Current Price: ${metrics['current_price']:,.2f}\n"
+            prompt += f"- 24h Volume: ${metrics['24h_volume']:,.2f}\n"
+            prompt += f"- 24h Change: {metrics['24h_change']:.2f}%\n"
+            prompt += f"- Market Cap: ${metrics['market_cap']:,.2f}\n\n"
+        
+        # Add sentiment analysis
+        prompt += f"Market Sentiment Analysis:\n"
+        prompt += f"- Overall Sentiment Score: {coffee_sentiment:.2f}\n"
+        prompt += f"- Overall Sentiment: {sentiment_description}\n"
+        prompt += f"- Sentiment Context: {sentiment_context}\n\n"
+
+        # Add user's original query for context
+        prompt += f"User Query: {command}\n\n"
+        
+        # Add analysis guidance
+        prompt += """Based on the user's query style and terminology, provide an appropriately detailed analysis that:
+1. Matches the technical depth to their apparent knowledge level
+2. Explains any complex concepts introduced
+3. Provides relevant context and background as needed
+4. Focuses on aspects most relevant to their interests
+5. Delivers actionable insights at an appropriate level
+
+Include market metrics, technical analysis, and recommendations that align with the user's demonstrated sophistication level."""
+
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": prompt}
+            ]
+        )
+        
+        analysis = response.choices[0].message.content
+        
+        # Format the final response with enhanced structure
         if is_intro:
             first_coin = analyzed_coins[0]
             first_coin_metrics = all_metrics[first_coin]
@@ -692,25 +638,63 @@ User Query: {user_input}"""
 
 {analysis}
 
-### Note
-• Current {first_coin.upper()} Price: ${first_coin_metrics['current_price']:,.2f}
-• This introduction is meant to help beginners understand {first_coin.title()}
-• For more detailed analysis, feel free to ask specific questions"""
+### Market Sentiment & Technical Indicators
+• Overall Sentiment: {sentiment_description.title()} ({coffee_sentiment:.2f})
+• Market Confidence: {get_confidence_level(coffee_sentiment).title()}
+• Consumer Trends: {sentiment_context}
+
+### Current Market Metrics ({current_time})
+• Price: ${first_coin_metrics['current_price']:,.2f}
+• 24h Change: {first_coin_metrics['24h_change']:+.2f}%
+• Volume: ${first_coin_metrics['24h_volume']:,.2f}
+• Market Cap: ${first_coin_metrics['market_cap']:,.2f}
+
+### Risk Assessment
+• Market Phase: {get_market_phase({'price_change_24h': first_coin_metrics['24h_change']})}
+• Risk Level: {get_risk_level({'price_change_24h': first_coin_metrics['24h_change']})}
+• Volatility: {get_volatility_measure({'high_24h': first_coin_metrics['current_price'] * 1.1, 'low_24h': first_coin_metrics['current_price'] * 0.9})}
+
+### Additional Resources
+For more detailed analysis, consider exploring:
+- Technical indicators and chart patterns
+- On-chain metrics and network health
+- Development activity and ecosystem growth
+- Regulatory developments and compliance updates"""
         else:
-            formatted_analysis = f"""### Market Analysis
+            formatted_analysis = f"""### Comprehensive Market Analysis
 
 {analysis}
 
-### Risk Disclaimer
-- All analysis is based on historical data and current market conditions
+### Market Sentiment & Technical Context
+• Overall Sentiment: {sentiment_description.title()} ({coffee_sentiment:.2f})
+• Market Confidence: {get_confidence_level(coffee_sentiment).title()}
+• Market Context: {sentiment_context}
+
+### Current Market State ({current_time})
+{chr(10).join(f"**{coin.upper()}**\n• Price: ${all_metrics[coin]['current_price']:,.2f}\n• 24h Change: {all_metrics[coin]['24h_change']:+.2f}%\n• Volume: ${all_metrics[coin]['24h_volume']:,.2f}\n• Market Cap: ${all_metrics[coin]['market_cap']:,.2f}" for coin in analyzed_coins)}
+
+### Risk Management Guidelines
+- Set clear entry and exit points based on technical levels
+- Use appropriate position sizing (1-2% risk per trade)
+- Implement stop-loss orders to protect capital
+- Consider using trailing stops in trending markets
+- Diversify across multiple cryptocurrencies and strategies
+
+### Disclaimer
+- Analysis based on current market data and historical patterns
 - Past performance does not guarantee future results
-- Always manage position sizes according to your risk tolerance
-- Consider using stop-loss orders and proper position sizing
-- Cryptocurrency markets are highly volatile and risky"""
+- Cryptocurrency markets are highly volatile
+- Always conduct your own research (DYOR)
+- Never invest more than you can afford to lose"""
             
         return jsonify({
             'Market Analysis': formatted_analysis,
-            'Metrics': all_metrics
+            'Metrics': all_metrics,
+            'Sentiment': {
+                'score': coffee_sentiment,
+                'description': sentiment_description,
+                'context': sentiment_context
+            }
         })
         
     except Exception as e:
@@ -728,5 +712,17 @@ def after_request(response):
     response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
     return response
 
+def get_confidence_level(sentiment_score):
+    if sentiment_score > 0.7:
+        return "very high"
+    elif sentiment_score > 0.6:
+        return "high"
+    elif sentiment_score > 0.4:
+        return "moderate"
+    elif sentiment_score > 0.3:
+        return "low"
+    else:
+        return "very low"
+
 if __name__ == '__main__':
-    app.run(debug=True, port=5050)
+    app.run(host='0.0.0.0', port=5051, debug=True)

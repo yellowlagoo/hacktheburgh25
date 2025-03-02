@@ -1,27 +1,18 @@
 import requests
-from bs4 import BeautifulSoup
-import torch
-import torchvision.transforms as transforms
-from torchvision.models import resnet50
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 import time
-from typing import List, Tuple, Dict, Optional, Any
+from typing import List, Dict, Optional, Any
 import logging
-import os
 import json
 from datetime import datetime
 from pathlib import Path
 import pickle
-import hashlib
-from PIL import Image
-from io import BytesIO
 from functools import wraps
-import cv2
-from social_media_scraper import scrape_social_media_images
+
 
 # Configure logging
 logging.basicConfig(
@@ -270,7 +261,6 @@ def analyze_market_sentiment(
     
     try:
         # Initialize components
-        skirt_analyzer = SkirtLengthAnalyzer(model_path)
         consumer_analyzer = ConsumerDataAnalyzer(
             coffee_data_path, 
             start_date=start_date, 
@@ -336,7 +326,6 @@ def analyze_market_sentiment(
                 "start_date": start_date,
                 "end_date": end_date,
                 "num_images_requested": 0 if historical_mode else num_images,
-                "num_images_processed": 0 if historical_mode else len(image_paths),
                 "processing_time_seconds": time.time() - start_time,
                 "model_metrics": metrics
             }
@@ -356,7 +345,7 @@ def analyze_market_sentiment(
         with open(csv_path, 'a') as f:
             if not csv_exists:
                 f.write("timestamp,time_period,sentiment_score,avg_skirt_length,coffee_spending\n")
-            f.write(f"{timestamp},{time_period},{sentiment_score},{avg_skirt_length},{coffee_score}\n")
+            f.write(f"{timestamp},{time_period},{sentiment_score},{coffee_score}\n")
         
         logger.info(f"Analysis complete. Sentiment score for {time_period}: {sentiment_score:.4f}")
         return results

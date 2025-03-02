@@ -7,9 +7,10 @@ interface AIBallProps {
   sentimentScore: number;
   isLoading: boolean;
   darkMode: boolean;
+  sentimentContext?: string;
 }
 
-const AIBall: React.FC<AIBallProps> = ({ prompt, fullResponse, sentimentScore, isLoading, darkMode }) => {
+const AIBall: React.FC<AIBallProps> = ({ prompt, fullResponse, sentimentScore, isLoading, darkMode, sentimentContext }) => {
   const [showFullResponse, setShowFullResponse] = useState(false);
   const [isShaking, setIsShaking] = useState(false);
 
@@ -112,9 +113,14 @@ const AIBall: React.FC<AIBallProps> = ({ prompt, fullResponse, sentimentScore, i
         ) : (
           <div className="text-sm overflow-auto max-h-full">
             <p className="font-semibold mb-2">Market Analysis</p>
-            <p className={`${sentimentScore >= 7 ? 'text-green-500' : sentimentScore <= 4 ? 'text-red-500' : 'text-gray-500'}`}>
+            <p className={`${sentimentScore >= 0.6 ? 'text-green-500' : sentimentScore <= 0.4 ? 'text-red-500' : 'text-gray-500'}`}>
               {prompt || 'Ask me about crypto market analysis'}
             </p>
+            {sentimentContext && (
+              <p className="mt-2 text-xs opacity-75">
+                {sentimentContext}
+              </p>
+            )}
           </div>
         )}
       </div>

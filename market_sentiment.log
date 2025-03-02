@@ -34,3 +34,256 @@ Traceback (most recent call last):
         newline="",
     )
 FileNotFoundError: [Errno 2] No such file or directory: 'data/coffee_spending.csv'
+2025-03-02 12:17:45,650 - werkzeug - WARNING -  * Debugger is active!
+2025-03-02 12:17:45,656 - werkzeug - INFO -  * Debugger PIN: 301-251-023
+2025-03-02 12:17:47,989 - werkzeug - INFO -  * Detected change in 'C:\\University_or_Work\\hacktheburgh_full\\market_sentiment_analyzer.py', reloading
+2025-03-02 12:17:52,379 - werkzeug - WARNING -  * Debugger is active!
+2025-03-02 12:17:52,384 - werkzeug - INFO -  * Debugger PIN: 301-251-023
+2025-03-02 12:18:35,083 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5050
+ * Running on http://10.126.250.32:5050
+2025-03-02 12:18:35,083 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-03-02 12:18:35,086 - werkzeug - INFO -  * Restarting with stat
+2025-03-02 12:18:39,061 - werkzeug - WARNING -  * Debugger is active!
+2025-03-02 12:18:39,066 - werkzeug - INFO -  * Debugger PIN: 175-631-666
+2025-03-02 12:19:22,364 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 12:19:22] "OPTIONS /command HTTP/1.1" 200 -
+2025-03-02 12:19:22,635 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 12:19:22] "[35m[1mPOST /command HTTP/1.1[0m" 500 -
+2025-03-02 12:20:34,387 - werkzeug - INFO -  * Detected change in 'C:\\University_or_Work\\hacktheburgh_full\\app.py', reloading
+2025-03-02 12:20:45,736 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5050
+ * Running on http://10.126.250.32:5050
+2025-03-02 12:20:45,737 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-03-02 12:20:45,739 - werkzeug - INFO -  * Restarting with stat
+2025-03-02 12:20:49,690 - werkzeug - WARNING -  * Debugger is active!
+2025-03-02 12:20:49,694 - werkzeug - INFO -  * Debugger PIN: 175-631-666
+2025-03-02 12:21:19,431 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 12:21:19] "OPTIONS /command HTTP/1.1" 200 -
+2025-03-02 12:21:20,444 - market_sentiment_analyzer - INFO - Successfully loaded and cleaned coffee data: 12 records
+2025-03-02 12:21:20,446 - market_sentiment_analyzer - INFO - Normalized coffee spending: 0.4101
+2025-03-02 12:21:20,939 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 403 Forbidden"
+2025-03-02 12:21:20,944 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 12:21:20] "[35m[1mPOST /command HTTP/1.1[0m" 500 -
+2025-03-02 12:21:49,563 - werkzeug - INFO -  * Detected change in 'C:\\University_or_Work\\hacktheburgh_full\\app.py', reloading
+2025-03-02 12:21:49,937 - werkzeug - INFO -  * Restarting with stat
+2025-03-02 12:21:54,011 - werkzeug - WARNING -  * Debugger is active!
+2025-03-02 12:21:54,018 - werkzeug - INFO -  * Debugger PIN: 175-631-666
+2025-03-02 12:21:55,512 - werkzeug - INFO -  * Detected change in 'C:\\University_or_Work\\hacktheburgh_full\\app.py', reloading
+2025-03-02 12:21:55,901 - werkzeug - INFO -  * Restarting with stat
+2025-03-02 12:21:59,940 - werkzeug - WARNING -  * Debugger is active!
+2025-03-02 12:21:59,946 - werkzeug - INFO -  * Debugger PIN: 175-631-666
+2025-03-02 12:22:23,986 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 12:22:23] "OPTIONS /command HTTP/1.1" 200 -
+2025-03-02 12:22:25,323 - market_sentiment_analyzer - INFO - Successfully loaded and cleaned coffee data: 12 records
+2025-03-02 12:22:25,324 - market_sentiment_analyzer - INFO - Normalized coffee spending: 0.4101
+2025-03-02 12:22:39,494 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-03-02 12:22:39,510 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 12:22:39] "[35m[1mPOST /command HTTP/1.1[0m" 500 -
+2025-03-02 12:24:58,218 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5050
+ * Running on http://10.126.250.32:5050
+2025-03-02 12:24:58,219 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-03-02 12:24:58,220 - werkzeug - INFO -  * Restarting with stat
+2025-03-02 12:25:02,244 - werkzeug - WARNING -  * Debugger is active!
+2025-03-02 12:25:02,249 - werkzeug - INFO -  * Debugger PIN: 175-631-666
+2025-03-02 12:25:35,985 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 12:25:35] "OPTIONS /command HTTP/1.1" 200 -
+2025-03-02 12:25:36,741 - market_sentiment_analyzer - INFO - Successfully loaded and cleaned coffee data: 12 records
+2025-03-02 12:25:36,742 - market_sentiment_analyzer - INFO - Normalized coffee spending: 0.4101
+2025-03-02 12:25:54,804 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-03-02 12:25:54,813 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 12:25:54] "POST /command HTTP/1.1" 200 -
+2025-03-02 12:30:55,272 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5050
+ * Running on http://10.126.250.32:5050
+2025-03-02 12:30:55,272 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-03-02 12:30:55,274 - werkzeug - INFO -  * Restarting with stat
+2025-03-02 12:30:59,286 - werkzeug - WARNING -  * Debugger is active!
+2025-03-02 12:30:59,289 - werkzeug - INFO -  * Debugger PIN: 175-631-666
+2025-03-02 12:32:09,567 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 12:32:09] "OPTIONS /command HTTP/1.1" 200 -
+2025-03-02 12:32:10,601 - market_sentiment_analyzer - INFO - Successfully loaded and cleaned coffee data: 12 records
+2025-03-02 12:32:10,602 - market_sentiment_analyzer - INFO - Normalized coffee spending: 0.4101
+2025-03-02 12:32:21,334 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-03-02 12:32:21,349 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 12:32:21] "POST /command HTTP/1.1" 200 -
+2025-03-02 12:40:25,541 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5050
+ * Running on http://10.126.250.32:5050
+2025-03-02 12:40:25,543 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-03-02 12:40:25,545 - werkzeug - INFO -  * Restarting with stat
+2025-03-02 12:40:29,780 - werkzeug - WARNING -  * Debugger is active!
+2025-03-02 12:40:29,787 - werkzeug - INFO -  * Debugger PIN: 175-631-666
+2025-03-02 12:40:59,237 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 12:40:59] "OPTIONS /command HTTP/1.1" 200 -
+2025-03-02 12:40:59,742 - market_sentiment_analyzer - INFO - Successfully loaded and cleaned coffee data: 12 records
+2025-03-02 12:40:59,744 - market_sentiment_analyzer - INFO - Normalized coffee spending: 0.4101
+2025-03-02 12:41:00,000 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 403 Forbidden"
+2025-03-02 12:41:00,003 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 12:41:00] "[35m[1mPOST /command HTTP/1.1[0m" 500 -
+2025-03-02 12:41:09,010 - werkzeug - INFO -  * Detected change in 'C:\\University_or_Work\\hacktheburgh_full\\app.py', reloading
+2025-03-02 12:41:09,453 - werkzeug - INFO -  * Restarting with stat
+2025-03-02 12:41:13,466 - werkzeug - WARNING -  * Debugger is active!
+2025-03-02 12:41:13,472 - werkzeug - INFO -  * Debugger PIN: 175-631-666
+2025-03-02 12:41:49,993 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5050
+ * Running on http://10.126.250.32:5050
+2025-03-02 12:41:49,993 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-03-02 12:41:49,995 - werkzeug - INFO -  * Restarting with stat
+2025-03-02 12:41:54,008 - werkzeug - WARNING -  * Debugger is active!
+2025-03-02 12:41:54,012 - werkzeug - INFO -  * Debugger PIN: 175-631-666
+2025-03-02 12:42:22,046 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 12:42:22] "OPTIONS /command HTTP/1.1" 200 -
+2025-03-02 12:42:22,481 - market_sentiment_analyzer - INFO - Successfully loaded and cleaned coffee data: 12 records
+2025-03-02 12:42:22,481 - market_sentiment_analyzer - INFO - Normalized coffee spending: 0.4101
+2025-03-02 12:42:38,428 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-03-02 12:42:38,452 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 12:42:38] "POST /command HTTP/1.1" 200 -
+2025-03-02 12:43:44,037 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 12:43:44] "OPTIONS /command HTTP/1.1" 200 -
+2025-03-02 12:43:45,067 - market_sentiment_analyzer - INFO - Successfully loaded and cleaned coffee data: 12 records
+2025-03-02 12:43:45,068 - market_sentiment_analyzer - INFO - Normalized coffee spending: 0.4101
+2025-03-02 12:43:56,243 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-03-02 12:43:56,251 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 12:43:56] "POST /command HTTP/1.1" 200 -
+2025-03-02 12:44:51,336 - werkzeug - INFO -  * Detected change in 'C:\\University_or_Work\\hacktheburgh_full\\app.py', reloading
+2025-03-02 12:44:51,774 - werkzeug - INFO -  * Restarting with stat
+2025-03-02 12:44:55,652 - werkzeug - WARNING -  * Debugger is active!
+2025-03-02 12:44:55,658 - werkzeug - INFO -  * Debugger PIN: 175-631-666
+2025-03-02 12:46:31,470 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5050
+ * Running on http://10.126.250.32:5050
+2025-03-02 12:46:31,470 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-03-02 12:46:31,473 - werkzeug - INFO -  * Restarting with stat
+2025-03-02 12:46:35,569 - werkzeug - WARNING -  * Debugger is active!
+2025-03-02 12:46:35,573 - werkzeug - INFO -  * Debugger PIN: 175-631-666
+2025-03-02 12:46:39,136 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 12:46:39] "OPTIONS /command HTTP/1.1" 200 -
+2025-03-02 12:46:40,334 - market_sentiment_analyzer - INFO - Successfully loaded and cleaned coffee data: 12 records
+2025-03-02 12:46:40,335 - market_sentiment_analyzer - INFO - Normalized coffee spending: 0.4101
+2025-03-02 12:46:50,719 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-03-02 12:46:50,729 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 12:46:50] "POST /command HTTP/1.1" 200 -
+2025-03-02 12:47:13,040 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 12:47:13] "OPTIONS /command HTTP/1.1" 200 -
+2025-03-02 12:47:13,556 - market_sentiment_analyzer - INFO - Successfully loaded and cleaned coffee data: 12 records
+2025-03-02 12:47:13,556 - market_sentiment_analyzer - INFO - Normalized coffee spending: 0.4101
+2025-03-02 12:47:23,512 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-03-02 12:47:23,515 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 12:47:23] "POST /command HTTP/1.1" 200 -
+2025-03-02 12:47:39,082 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 12:47:39] "OPTIONS /command HTTP/1.1" 200 -
+2025-03-02 12:47:39,400 - market_sentiment_analyzer - INFO - Successfully loaded and cleaned coffee data: 12 records
+2025-03-02 12:47:39,401 - market_sentiment_analyzer - INFO - Normalized coffee spending: 0.4101
+2025-03-02 12:47:53,971 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-03-02 12:47:53,974 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 12:47:53] "POST /command HTTP/1.1" 200 -
+2025-03-02 12:51:13,303 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5050
+ * Running on http://10.126.250.32:5050
+2025-03-02 12:51:13,305 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-03-02 12:51:13,310 - werkzeug - INFO -  * Restarting with stat
+2025-03-02 12:51:17,486 - werkzeug - WARNING -  * Debugger is active!
+2025-03-02 12:51:17,491 - werkzeug - INFO -  * Debugger PIN: 175-631-666
+2025-03-02 12:51:19,037 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 12:51:19] "OPTIONS /command HTTP/1.1" 200 -
+2025-03-02 12:51:20,040 - market_sentiment_analyzer - INFO - Successfully loaded and cleaned coffee data: 12 records
+2025-03-02 12:51:20,040 - market_sentiment_analyzer - INFO - Normalized coffee spending: 0.4101
+2025-03-02 12:51:35,285 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-03-02 12:51:35,303 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 12:51:35] "POST /command HTTP/1.1" 200 -
+2025-03-02 12:57:23,633 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5050
+ * Running on http://10.126.250.32:5050
+2025-03-02 12:57:23,633 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-03-02 12:57:23,635 - werkzeug - INFO -  * Restarting with stat
+2025-03-02 12:57:27,819 - werkzeug - WARNING -  * Debugger is active!
+2025-03-02 12:57:27,827 - werkzeug - INFO -  * Debugger PIN: 175-631-666
+2025-03-02 12:57:28,686 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 12:57:28] "OPTIONS /command HTTP/1.1" 200 -
+2025-03-02 12:57:29,510 - market_sentiment_analyzer - INFO - Successfully loaded and cleaned coffee data: 12 records
+2025-03-02 12:57:29,511 - market_sentiment_analyzer - INFO - Normalized coffee spending: 0.4101
+2025-03-02 12:57:45,812 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-03-02 12:57:45,819 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 12:57:45] "POST /command HTTP/1.1" 200 -
+2025-03-02 12:59:22,477 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5050
+ * Running on http://10.126.250.32:5050
+2025-03-02 12:59:22,477 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-03-02 12:59:22,479 - werkzeug - INFO -  * Restarting with stat
+2025-03-02 12:59:26,607 - werkzeug - WARNING -  * Debugger is active!
+2025-03-02 12:59:26,613 - werkzeug - INFO -  * Debugger PIN: 175-631-666
+2025-03-02 12:59:28,663 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 12:59:28] "OPTIONS /command HTTP/1.1" 200 -
+2025-03-02 12:59:30,035 - market_sentiment_analyzer - INFO - Successfully loaded and cleaned coffee data: 12 records
+2025-03-02 12:59:30,036 - market_sentiment_analyzer - INFO - Normalized coffee spending: 0.4101
+2025-03-02 12:59:46,366 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-03-02 12:59:46,373 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 12:59:46] "POST /command HTTP/1.1" 200 -
+2025-03-02 13:01:17,896 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5050
+ * Running on http://10.126.250.32:5050
+2025-03-02 13:01:17,897 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-03-02 13:01:17,898 - werkzeug - INFO -  * Restarting with stat
+2025-03-02 13:01:21,920 - werkzeug - WARNING -  * Debugger is active!
+2025-03-02 13:01:21,925 - werkzeug - INFO -  * Debugger PIN: 175-631-666
+2025-03-02 13:01:58,658 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 13:01:58] "OPTIONS /command HTTP/1.1" 200 -
+2025-03-02 13:01:59,820 - market_sentiment_analyzer - INFO - Successfully loaded and cleaned coffee data: 12 records
+2025-03-02 13:01:59,821 - market_sentiment_analyzer - INFO - Normalized coffee spending: 0.4101
+2025-03-02 13:02:14,444 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-03-02 13:02:14,468 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 13:02:14] "POST /command HTTP/1.1" 200 -
+2025-03-02 13:03:27,727 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5050
+ * Running on http://10.126.250.32:5050
+2025-03-02 13:03:27,727 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-03-02 13:03:27,729 - werkzeug - INFO -  * Restarting with stat
+2025-03-02 13:03:31,666 - werkzeug - WARNING -  * Debugger is active!
+2025-03-02 13:03:31,670 - werkzeug - INFO -  * Debugger PIN: 175-631-666
+2025-03-02 13:03:32,531 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 13:03:32] "OPTIONS /command HTTP/1.1" 200 -
+2025-03-02 13:03:33,092 - market_sentiment_analyzer - INFO - Successfully loaded and cleaned coffee data: 12 records
+2025-03-02 13:03:33,106 - market_sentiment_analyzer - INFO - Normalized coffee spending: 0.4101
+2025-03-02 13:03:52,281 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-03-02 13:03:52,288 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 13:03:52] "POST /command HTTP/1.1" 200 -
+2025-03-02 14:18:18,196 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5051
+ * Running on http://10.126.250.32:5051
+2025-03-02 14:18:18,197 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-03-02 14:18:18,200 - werkzeug - INFO -  * Restarting with stat
+2025-03-02 14:18:21,711 - werkzeug - WARNING -  * Debugger is active!
+2025-03-02 14:18:21,717 - werkzeug - INFO -  * Debugger PIN: 175-631-666
+2025-03-02 14:21:16,323 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5051
+ * Running on http://10.126.250.32:5051
+2025-03-02 14:21:16,324 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-03-02 14:21:16,326 - werkzeug - INFO -  * Restarting with stat
+2025-03-02 14:21:19,922 - werkzeug - WARNING -  * Debugger is active!
+2025-03-02 14:21:19,929 - werkzeug - INFO -  * Debugger PIN: 175-631-666
+2025-03-02 14:21:22,387 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 14:21:22] "GET /price/solana HTTP/1.1" 200 -
+2025-03-02 14:21:22,452 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 14:21:22] "GET /price/bitcoin HTTP/1.1" 200 -
+2025-03-02 14:21:22,458 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 14:21:22] "GET /price/ethereum HTTP/1.1" 200 -
+2025-03-02 14:21:22,554 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 14:21:22] "GET /price/ripple HTTP/1.1" 200 -
+2025-03-02 14:21:22,604 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 14:21:22] "GET /price/binancecoin HTTP/1.1" 200 -
+2025-03-02 14:21:29,353 - werkzeug - INFO -  * Detected change in 'C:\\University_or_Work\\hacktheburgh_full\\app.py', reloading
+2025-03-02 14:21:29,720 - werkzeug - INFO -  * Restarting with stat
+2025-03-02 14:21:32,928 - werkzeug - WARNING -  * Debugger is active!
+2025-03-02 14:21:32,932 - werkzeug - INFO -  * Debugger PIN: 175-631-666
+2025-03-02 14:22:35,500 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 14:22:35] "[31m[1mGET /price/bitcoin HTTP/1.1[0m" 429 -
+2025-03-02 14:22:35,513 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 14:22:35] "[31m[1mGET /price/ethereum HTTP/1.1[0m" 429 -
+2025-03-02 14:22:35,516 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 14:22:35] "[31m[1mGET /price/solana HTTP/1.1[0m" 429 -
+2025-03-02 14:22:35,669 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 14:22:35] "GET /price/binancecoin HTTP/1.1" 200 -
+2025-03-02 14:22:35,672 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 14:22:35] "GET /price/ripple HTTP/1.1" 200 -
+2025-03-02 14:22:35,809 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 14:22:35] "GET /price/bitcoin HTTP/1.1" 200 -
+2025-03-02 14:23:21,674 - werkzeug - INFO -  * Detected change in 'C:\\University_or_Work\\hacktheburgh_full\\app.py', reloading
+2025-03-02 14:23:22,076 - werkzeug - INFO -  * Restarting with stat
+2025-03-02 14:23:25,796 - werkzeug - WARNING -  * Debugger is active!
+2025-03-02 14:23:25,800 - werkzeug - INFO -  * Debugger PIN: 175-631-666
+2025-03-02 14:23:30,954 - werkzeug - INFO -  * Detected change in 'C:\\University_or_Work\\hacktheburgh_full\\app.py', reloading
+2025-03-02 14:23:31,386 - werkzeug - INFO -  * Restarting with stat
+2025-03-02 14:23:34,884 - werkzeug - WARNING -  * Debugger is active!
+2025-03-02 14:23:34,888 - werkzeug - INFO -  * Debugger PIN: 175-631-666
+2025-03-02 14:23:36,560 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 14:23:36] "GET /price/bitcoin HTTP/1.1" 200 -
+2025-03-02 14:23:36,560 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 14:23:36] "GET /price/ethereum HTTP/1.1" 200 -
+2025-03-02 14:23:36,870 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 14:23:36] "GET /price/ethereum HTTP/1.1" 200 -
+2025-03-02 14:23:37,179 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 14:23:37] "GET /price/ethereum HTTP/1.1" 200 -
+2025-03-02 14:23:37,876 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 14:23:37] "GET /price/ethereum HTTP/1.1" 200 -
+2025-03-02 14:23:38,512 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 14:23:38] "GET /price/binancecoin HTTP/1.1" 200 -
+2025-03-02 14:23:38,515 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 14:23:38] "GET /price/binancecoin HTTP/1.1" 200 -
+2025-03-02 14:23:38,821 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 14:23:38] "GET /price/binancecoin HTTP/1.1" 200 -
+2025-03-02 14:23:39,205 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 14:23:39] "GET /price/binancecoin HTTP/1.1" 200 -
+2025-03-02 14:23:40,177 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 14:23:40] "GET /price/solana HTTP/1.1" 200 -
+2025-03-02 14:23:40,527 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 14:23:40] "GET /price/solana HTTP/1.1" 200 -
+2025-03-02 14:23:40,782 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 14:23:40] "GET /price/solana HTTP/1.1" 200 -
+2025-03-02 14:23:40,836 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 14:23:40] "GET /price/solana HTTP/1.1" 200 -
+2025-03-02 14:23:42,019 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 14:23:42] "GET /price/ripple HTTP/1.1" 200 -
+2025-03-02 14:23:42,334 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 14:23:42] "GET /price/ripple HTTP/1.1" 200 -
+2025-03-02 14:23:42,645 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 14:23:42] "GET /price/ripple HTTP/1.1" 200 -
+2025-03-02 14:23:42,953 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 14:23:42] "GET /price/ripple HTTP/1.1" 200 -
+2025-03-02 14:24:04,519 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 14:24:04] "GET /price/bitcoin HTTP/1.1" 200 -
+2025-03-02 14:24:07,029 - werkzeug - INFO - 127.0.0.1 - - [02/Mar/2025 14:24:07] "GET /price/ethereum HTTP/1.1" 200 -

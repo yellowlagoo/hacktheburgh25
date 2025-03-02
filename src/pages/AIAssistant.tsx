@@ -12,6 +12,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ darkMode }) => {
   const [prompt, setPrompt] = useState('');
   const [fullResponse, setFullResponse] = useState('');
   const [sentimentScore, setSentimentScore] = useState(0);
+  const [sentimentContext, setSentimentContext] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
 
@@ -39,18 +40,10 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ darkMode }) => {
         return;
       }
 
-      // Calculate a sentiment score based on price changes
-      const metrics = data.Metrics?.bitcoin || {};
-      console.log('Metrics:', metrics); // Debug log
-      
-      const sentimentFactors = [
-        metrics.price_change_24h || 0,
-        metrics.price_change_7d || 0,
-        metrics.price_change_30d || 0,
-      ];
-      const avgChange = sentimentFactors.reduce((a, b) => a + b, 0) / sentimentFactors.length;
-      // Convert average change to a 1-10 scale
-      const score = Math.min(Math.max(Math.round((avgChange + 20) / 4), 1), 10);
+      // Get sentiment data
+      const sentiment = data.Sentiment || {};
+      setSentimentScore(sentiment.score || 0);
+      setSentimentContext(sentiment.context || '');
 
       // Get the first section as the summary
       const marketAnalysis = data['Market Analysis'] || '';
@@ -61,7 +54,6 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ darkMode }) => {
       
       setPrompt(summary || 'Analysis received');
       setFullResponse(marketAnalysis);
-      setSentimentScore(score);
     } catch (error) {
       console.error('Error processing command:', error);
       setPrompt('Sorry, there was an error processing your request.');
@@ -90,7 +82,8 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ darkMode }) => {
       <AIBall 
         prompt={prompt} 
         fullResponse={fullResponse} 
-        sentimentScore={sentimentScore} 
+        sentimentScore={sentimentScore}
+        sentimentContext={sentimentContext}
         isLoading={isLoading}
         darkMode={darkMode}
       />
