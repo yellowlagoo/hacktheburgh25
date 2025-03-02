@@ -287,7 +287,7 @@ def analyze_market_sentiment(
            
             
             # Prepare features
-            features = np.array(coffee_score])
+            features = np.array(coffee_score)
         else:
             logger.info("Step : Processing consumer data")
             coffee_score = consumer_analyzer.process_consumer_data()
@@ -336,7 +336,7 @@ def analyze_market_sentiment(
                 "start_date": start_date,
                 "end_date": end_date,
                 "num_images_requested": 0 if historical_mode else num_images,
-                "num_images_processed": 0 if historical_mode else len(image_paths)"
+                "num_images_processed": 0 if historical_mode else len(image_paths),
                 "processing_time_seconds": time.time() - start_time,
                 "model_metrics": metrics
             }
